@@ -1,0 +1,16 @@
+version: "2"
+services:
+  # 数据搜集，时序数据库
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      - ./volumn/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+  # 数据展示
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 3000:3000
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin

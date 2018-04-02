@@ -1,0 +1,16 @@
+# server 相关
+server:
+  port: 8080
+
+# 项目管理相关
+management:
+  endpoints:
+    web:
+      exposure:
+        # 开启一些 http 接口 url 出来
+        include: health,info,auditevents,beans,conditions,configprops,env,health,heapdump,httptrace,loggers,metrics,mappings,threaddump
+
+
+spring:
+  profiles:
+    active: dev
