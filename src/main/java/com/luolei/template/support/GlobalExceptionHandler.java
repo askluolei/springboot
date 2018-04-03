@@ -2,15 +2,14 @@ package com.luolei.template.support;
 
 import com.luolei.template.error.BaseException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 
-import static com.luolei.template.support.R.ILLEGAL_ARGUMENT;
-import static com.luolei.template.support.R.INTERNAL_ERROR;
-import static com.luolei.template.support.R.KNOWN_BIZ_ERROR;
+import static com.luolei.template.support.R.*;
 
 /**
  * 全局异常处理
@@ -93,6 +92,23 @@ public class GlobalExceptionHandler {
             return R.error(INTERNAL_ERROR, e);
         } else {
             return R.error(INTERNAL_ERROR, e.getMessage());
+        }
+    }
+
+    /**
+     * spring-security 的认证授权异常
+     * @param e
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(AuthenticationException.class)
+    @ResponseBody
+    public R handleAll(AuthenticationException e, WebRequest request) {
+        log.error("认证异常", e);
+        if (isDebug(request)) {
+            return R.error(AUTHENTICATION_ERROR, e);
+        } else {
+            return R.error(AUTHENTICATION_ERROR, e.getMessage());
         }
     }
 

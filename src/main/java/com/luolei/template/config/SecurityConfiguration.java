@@ -5,11 +5,11 @@ import com.luolei.template.security.jwt.JWTConfigurer;
 import com.luolei.template.security.jwt.TokenProvider;
 import com.luolei.template.support.Constants;
 import org.springframework.beans.factory.BeanInitializationException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -68,6 +68,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         }
     }
 
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
     /**
      * 密码hash类
      * @return
@@ -79,6 +85,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     /**
      * 配置忽略安全的url
+     * 这里的配置优先
+     * 下面的 httpsecurity 配置优先级在后面
      * @param web
      * @throws Exception
      */
@@ -86,11 +94,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
         web.ignoring()
                 .antMatchers(HttpMethod.OPTIONS, "/**")
-//                .antMatchers("/app/**/*.{js,html}")
+                .antMatchers("/app/**/*.{js,html}")
                 .antMatchers("/i18n/**")
-//                .antMatchers("/content/**")
-//                .antMatchers("/swagger-ui.html")
-//                .antMatchers("/test/**")
+                .antMatchers("/content/**")
+                .antMatchers("/test/**")
+                .mvcMatchers("/swagger-ui.html")
                 .antMatchers("/h2-console/**");
     }
 
@@ -135,13 +143,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private JWTConfigurer securityConfigurerAdapter() {
         return new JWTConfigurer(tokenProvider);
-    }
-
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth
-                .inMemoryAuthentication()
-                .withUser("user").password("password").roles("admin");
     }
 
 }

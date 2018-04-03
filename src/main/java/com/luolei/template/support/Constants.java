@@ -18,6 +18,9 @@ public interface Constants {
     String ANONYMOUS_USER = "anonymoususer";
     String DEFAULT_LANGUAGE = "zh-cn";
 
+    int PASSWORD_MIN_LENGTH = 4;
+    int PASSWORD_MAX_LENGTH = 16;
+
     String ROLE_PREFIX = "ROLE_";
     String ROLE_ADMIN = "admin";
 }

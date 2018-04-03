@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
+ * 权限测试
+ *
  * @author 罗雷
  * @date 2018/4/3 0003
  * @time 17:23
@@ -15,8 +17,23 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = {"/api/security"}, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
 public class SecurityController {
 
-    @GetMapping
-    public R index() {
+    @GetMapping("/anonymoususer")
+    public R anonymoususer() {
+        return R.ok();
+    }
+
+    @GetMapping("/authentication")
+    public R authentication() {
+        return R.ok();
+    }
+
+    @GetMapping("/role")
+    public R hasRole() {
+        return R.ok();
+    }
+
+    @GetMapping("/authority")
+    public R hasAuthority() {
         return R.ok();
     }
 }

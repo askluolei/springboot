@@ -61,37 +61,32 @@ public class TokenProvider {
 
     private static final String DOT = ",";
 
-    private String generateAuthoritiesString(User user) {
+    private String generateAuthoritiesString(Authentication authentication) {
         StringBuilder stringBuilder = new StringBuilder();
-        if (Objects.nonNull(user) && Objects.nonNull(user.getRoles())) {
-            for (Role role : user.getRoles()) {
-                stringBuilder.append(Constants.ROLE_PREFIX).append(role.getName()).append(DOT);
-                if (Objects.nonNull(role.getAuthorities())) {
-                    for (Authority authority : role.getAuthorities()) {
-                        stringBuilder.append(authority.getType().name()).append(authority.getAuthority()).append(DOT);
-                    }
-                }
-            }
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        for (GrantedAuthority grantedAuthority : authorities) {
+            stringBuilder.append(grantedAuthority.getAuthority()).append(DOT);
         }
-        stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+        if (stringBuilder.length() > 0) {
+            stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+        }
         return stringBuilder.toString();
     }
 
     /**
      * 生成凭证的时候将权限信息都写进去了，会导致token变的非常大，但是后面校验的时候不需要从数据库查询权限信息了
      * 为了限制token的长度，授权的时候尽量使用通配符
-     * @param user
+     * @param authentication
      * @return
      */
-    public String createAccessToken(User user) {
+    public String createAccessToken(Authentication authentication) {
         Date nowDate = new Date();
         //过期时间
         Date expireDate = new Date(nowDate.getTime() + tokenValidityInMilliseconds);
         return Jwts.builder()
                 .claim(TOKEN_TYPE_KEY, TOKEN_TYPE)
-                .claim(USER_ID_KEY, String.valueOf(user.getId()))
-                .claim(AUTHORITIES_KEY, generateAuthoritiesString(user))
-                .setSubject(user.getUsername())
+                .claim(AUTHORITIES_KEY, generateAuthoritiesString(authentication))
+                .setSubject(authentication.getName())
                 .setIssuedAt(nowDate)
                 .setExpiration(expireDate)
                 .signWith(SignatureAlgorithm.HS512, secretKey)
@@ -100,20 +95,19 @@ public class TokenProvider {
 
     /**
      * 生成凭证，带随机数
-     * @param user
+     * @param authentication
      * @param random
      * @return
      */
-    public String createAccessToken(User user, long random) {
+    public String createAccessToken(Authentication authentication, long random) {
         Date nowDate = new Date();
         //过期时间
         Date expireDate = new Date(nowDate.getTime() + tokenValidityInMilliseconds);
         return Jwts.builder()
                 .claim(TOKEN_TYPE_KEY, TOKEN_TYPE)
                 .claim(RANDOM_KEY, random)
-                .claim(USER_ID_KEY, String.valueOf(user.getId()))
-                .claim(AUTHORITIES_KEY, generateAuthoritiesString(user))
-                .setSubject(user.getUsername())
+                .claim(AUTHORITIES_KEY, generateAuthoritiesString(authentication))
+                .setSubject(authentication.getName())
                 .setIssuedAt(nowDate)
                 .setExpiration(expireDate)
                 .signWith(SignatureAlgorithm.HS512, secretKey)
@@ -122,18 +116,17 @@ public class TokenProvider {
 
     /**
      * 生成刷新凭证
-     * @param user
+     * @param authentication
      * @return
      */
-    public String createRefreshToken(User user) {
+    public String createRefreshToken(Authentication authentication) {
         Date nowDate = new Date();
         //过期时间 7天
         Date expireDate = new Date(nowDate.getTime() + tokenValidityInMillisecondsForRememberMe);
         return Jwts.builder()
                 .claim(TOKEN_TYPE_KEY, REFRESH_TOKEN_TYPE)
-                .claim(USER_ID_KEY, String.valueOf(user.getId()))
-                .claim(AUTHORITIES_KEY, generateAuthoritiesString(user))
-                .setSubject(user.getUsername())
+                .claim(AUTHORITIES_KEY, generateAuthoritiesString(authentication))
+                .setSubject(authentication.getName())
                 .setIssuedAt(nowDate)
                 .setExpiration(expireDate)
                 .signWith(SignatureAlgorithm.HS512, secretKey)
@@ -142,20 +135,19 @@ public class TokenProvider {
 
     /**
      * 生成刷新凭证，带随机数
-     * @param user
+     * @param authentication
      * @param random
      * @return
      */
-    public String createRefreshToken(User user, long random) {
+    public String createRefreshToken(Authentication authentication, long random) {
         Date nowDate = new Date();
         //过期时间 7天
         Date expireDate = new Date(nowDate.getTime() + tokenValidityInMillisecondsForRememberMe);
         return Jwts.builder()
                 .claim(TOKEN_TYPE_KEY, REFRESH_TOKEN_TYPE)
                 .claim(RANDOM_KEY, random)
-                .claim(USER_ID_KEY, String.valueOf(user.getId()))
-                .claim(AUTHORITIES_KEY, generateAuthoritiesString(user))
-                .setSubject(user.getUsername())
+                .claim(AUTHORITIES_KEY, generateAuthoritiesString(authentication))
+                .setSubject(authentication.getName())
                 .setIssuedAt(nowDate)
                 .setExpiration(expireDate)
                 .signWith(SignatureAlgorithm.HS512, secretKey)
@@ -240,20 +232,11 @@ public class TokenProvider {
     }
 
     /**
-     * 从token 里面获取 id,不校验
-     * @param token
-     * @return
-     */
-    public long getUserID(String token) {
-        return Long.parseLong(parseToken(token).get(USER_ID_KEY));
-    }
-
-    /**
      * 从token中获取用户名,不校验
      * @param token
      * @return
      */
-    public String getLogin(String token) {
+    public String getUsername(String token) {
         return parseToken(token).get(SUBJECT_KEY);
     }
 

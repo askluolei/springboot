@@ -44,6 +44,11 @@ public class R {
     public static final String NOT_IMPLEMENTED = "not_implemented";
     public static final String FILE_NOT_EXIST = "file_not_exist";
 
+    public static final String AUTHENTICATION_ERROR = "authentication_error";
+    public static final String AUTHORIZATION_ERROR = "authorization_error";
+
+
+
     /**
      * 响应码对应的描述存在这里
      */
@@ -61,6 +66,8 @@ public class R {
         put(INTERNAL_ERROR, "未预期的系统内部异常");
         put(NOT_IMPLEMENTED, "未实现的功能");
         put(FILE_NOT_EXIST, "待下载的文件不存在");
+        put(AUTHENTICATION_ERROR, "认证异常");
+        put(AUTHORIZATION_ERROR, "授权异常");
     }
 
     static void put(String key, String value) {

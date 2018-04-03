@@ -35,7 +35,7 @@ public class DomainUserDetailsService implements UserDetailsService {
         log.debug("Authenticating {}", username);
         String lowercaseUsername = username.toLowerCase(Locale.ENGLISH);
         Optional<User> optional = userRepository.findOneWithRolesByUsername(lowercaseUsername);
-        optional.map(user -> {
+        return optional.map(user -> {
             if (!user.isActivated()) {
                 throw new UserNotActivatedException("User " + lowercaseUsername + " was not activated");
             }
@@ -53,6 +53,5 @@ public class DomainUserDetailsService implements UserDetailsService {
             }
             return new org.springframework.security.core.userdetails.User(lowercaseUsername, user.getPassword(), grantedAuthorities);
         }).orElseThrow(() -> new UsernameNotFoundException("User " + lowercaseUsername + " was not found in the " + "database"));
-        return null;
     }
 }

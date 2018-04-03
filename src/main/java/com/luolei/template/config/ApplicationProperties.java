@@ -24,6 +24,13 @@ public class ApplicationProperties {
     private FileSystem fileSystem = new FileSystem();
     private Security security = new Security();
     private final CorsConfiguration cors = new CorsConfiguration();
+    private final Sequence sequence = new Sequence();
+
+    @Data
+    public static class Sequence {
+        private int workerId = DefaultValues.Sequence.workerId;
+        private int datacenterId = DefaultValues.Sequence.datacenterId;
+    }
 
     @Data
     public static class Async {

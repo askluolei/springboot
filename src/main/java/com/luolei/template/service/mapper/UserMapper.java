@@ -10,7 +10,7 @@ import org.mapstruct.factory.Mappers;
  * @author luolei
  * @createTime 2018-04-02 23:41
  */
-@Mapper
+@Mapper(componentModel =  "spring")
 public interface UserMapper {
 
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);

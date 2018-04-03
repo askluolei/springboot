@@ -3,6 +3,7 @@ package com.luolei.template.config;
 import com.luolei.template.support.resolver.RequestIPResolver;
 import com.luolei.template.support.resolver.RequestPlatformResolver;
 import com.luolei.template.support.resolver.RequestUriResolver;
+import com.luolei.template.utils.Sequence;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -55,5 +56,10 @@ public class WebConfiguration implements WebMvcConfigurer {
             source.registerCorsConfiguration("/v2/api-docs", config);
         }
         return new CorsFilter(source);
+    }
+
+    @Bean
+    public Sequence sequence() {
+        return new Sequence(applicationProperties.getSequence().getWorkerId(), applicationProperties.getSequence().getDatacenterId());
     }
 }

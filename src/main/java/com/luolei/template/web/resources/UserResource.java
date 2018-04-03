@@ -5,6 +5,7 @@ import com.luolei.template.repository.UserRepository;
 import com.luolei.template.support.R;
 import io.micrometer.core.annotation.Timed;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -17,13 +18,16 @@ import org.springframework.web.bind.annotation.*;
 public class UserResource {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserResource(UserRepository userRepository) {
+    public UserResource(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping
     public R addUser(@RequestBody User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return R.ok(userRepository.save(user));
     }
 

@@ -21,6 +21,11 @@ public interface DefaultValues {
         int queueCapacity = 10000;
     }
 
+    interface Sequence {
+        int workerId = 0;
+        int datacenterId = 0;
+    }
+
     /**
      * swagger 的默认配置
      */

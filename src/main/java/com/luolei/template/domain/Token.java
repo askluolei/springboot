@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 /**
  * token信息
@@ -51,7 +51,7 @@ public class Token extends AbstractAuditingEntity {
      * 不是必须的，token中有过期时间信息
      */
     @Column(name = "expire_time")
-    private LocalDateTime expireTime;
+    private Instant expireTime;
 
     /**
      * sessionID
@@ -86,8 +86,8 @@ public class Token extends AbstractAuditingEntity {
     private String loginIP;
 
     /**
-     * 用户
+     * 用户名
      */
-    @Column(name = "user_id")
-    private Long userID;
+    @Column(name = "username")
+    private String username;
 }
