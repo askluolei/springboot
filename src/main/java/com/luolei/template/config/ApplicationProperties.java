@@ -4,6 +4,9 @@ import com.luolei.template.support.DefaultValues;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.cors.CorsConfiguration;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * 自定义的配置项
@@ -12,7 +15,6 @@ import org.springframework.context.annotation.Configuration;
  * @createTime 2018-03-24 12:39
  */
 @Data
-@Configuration
 @ConfigurationProperties(prefix = "application", ignoreUnknownFields = false)
 public class ApplicationProperties {
 
@@ -20,6 +22,8 @@ public class ApplicationProperties {
     private final Swagger swagger = new Swagger();
     private final Metrics metrics = new Metrics();
     private FileSystem fileSystem = new FileSystem();
+    private Security security = new Security();
+    private final CorsConfiguration cors = new CorsConfiguration();
 
     @Data
     public static class Async {
@@ -81,5 +85,38 @@ public class ApplicationProperties {
     @Data
     public static class FileSystem {
         private String rootDir;
+    }
+
+    @Data
+    public static class Security {
+        private final ClientAuthorization clientAuthorization = new ClientAuthorization();
+        private final Authentication authentication = new Authentication();
+        private final RememberMe rememberMe = new RememberMe();
+
+        @Data
+        public static class ClientAuthorization {
+            private String accessTokenUri = DefaultValues.Security.ClientAuthorization.accessTokenUri;
+            private String tokenServiceId = DefaultValues.Security.ClientAuthorization.tokenServiceId;
+            private String clientId = DefaultValues.Security.ClientAuthorization.clientId;
+            private String clientSecret = DefaultValues.Security.ClientAuthorization.clientSecret;
+        }
+
+        @Data
+        public static class Authentication {
+            private final Jwt jwt = new Jwt();
+
+            @Data
+            public static class Jwt {
+                private String secret = DefaultValues.Security.Authentication.Jwt.secret;
+                private long tokenValidityInSeconds = DefaultValues.Security.Authentication.Jwt.tokenValidityInSeconds;
+                private long tokenValidityInSecondsForRememberMe = DefaultValues.Security.Authentication.Jwt.tokenValidityInSecondsForRememberMe;
+            }
+        }
+
+        @Data
+        public static class RememberMe {
+            @NotNull
+            private String key = DefaultValues.Security.RememberMe.key;
+        }
     }
 }

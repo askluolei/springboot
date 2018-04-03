@@ -1,20 +1,24 @@
 package com.luolei.template.domain;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.Objects;
+import java.util.Set;
 
 /**
+ * 角色
  * @author luolei
  * @createTime 2018-04-01 21:06
  */
-@Data
+@Getter
+@Setter
+@ToString
 @Table(name = "t_role")
 @Entity
 public class Role extends AbstractAuditingEntity implements Serializable {
@@ -33,20 +37,11 @@ public class Role extends AbstractAuditingEntity implements Serializable {
     @Column(name = "c_explanation")
     private String explanation;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Role role = (Role) o;
-        return !(role.getId() == null || getId() == null) && Objects.equals(getId(), role.getId());
-    }
+    @JsonIgnore
+    @ManyToMany
+    @JoinTable(name = "t_role_authority",
+            joinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "authority_id", referencedColumnName = "id")})
+    private Set<Authority> authorities;
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(getId());
-    }
 }

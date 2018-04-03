@@ -2,16 +2,16 @@ package com.luolei.template.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.luolei.template.support.Constants;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * 用户
@@ -21,7 +21,9 @@ import java.time.Instant;
  * @author luolei
  * @createTime 2018-03-28 22:19
  */
-@Data
+@Getter
+@Setter
+@ToString
 @Entity
 @Table(name = "t_user")
 public class User extends AbstractAuditingEntity implements Serializable {
@@ -35,7 +37,6 @@ public class User extends AbstractAuditingEntity implements Serializable {
      * 只用set 不用get 也就是说只反序列化，不序列化
      */
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-
     @Column(name = "password_hash", length = 60)
     private String password;
 
@@ -69,4 +70,16 @@ public class User extends AbstractAuditingEntity implements Serializable {
 
     @Column(name = "reset_date")
     private Instant resetDate = null;
+
+    /**
+     * 这里统一做一个约定
+     * 有级联关系的实体，转成json的时候一律不要序列化，需要信息的单独查询
+     */
+    @JsonIgnore
+    @ManyToMany
+    @JoinTable(
+            name = "t_user_roles",
+            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")})
+    private Set<Role> roles = new HashSet<>();
 }

@@ -17,4 +17,7 @@ public interface Constants {
     String SYSTEM_ACCOUNT = "system";
     String ANONYMOUS_USER = "anonymoususer";
     String DEFAULT_LANGUAGE = "zh-cn";
+
+    String ROLE_PREFIX = "ROLE_";
+    String ROLE_ADMIN = "admin";
 }

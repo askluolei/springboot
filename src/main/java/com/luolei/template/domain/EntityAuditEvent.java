@@ -1,6 +1,8 @@
 package com.luolei.template.domain;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -14,7 +16,8 @@ import java.time.Instant;
  * @author luolei
  * @createTime 2018-03-28 22:58
  */
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "jhi_entity_audit_event")
 public class EntityAuditEvent implements Serializable {

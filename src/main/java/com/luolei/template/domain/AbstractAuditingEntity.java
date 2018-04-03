@@ -2,7 +2,8 @@ package com.luolei.template.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.luolei.template.config.audit.EntityAuditEventListener;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -17,11 +18,14 @@ import java.util.Objects;
 /**
  * 抽象的实体基类，提供审计字段
  * 继承这个的数据库实体，就能享受审计功能，已经操作记录追踪
+ * 这里也统一写了 equals 和 hashCode 方法
+ * 注意继承的类不要使用 @Data 注解了，不然equals 跟 hashCode 方法被覆盖了
  *
  * @author luolei
  * @createTime 2018-03-28 21:43
  */
-@Data
+@Setter
+@Getter
 @MappedSuperclass
 @EntityListeners({AuditingEntityListener.class, EntityAuditEventListener.class})
 public class AbstractAuditingEntity implements Serializable {
