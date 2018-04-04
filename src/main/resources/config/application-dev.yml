@@ -33,3 +33,7 @@ info:
 application:
   fileSystem:
     rootDir: F:\files
+  security:
+    authentication:
+      jwt:
+        secret: "mysecret"

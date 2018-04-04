@@ -4,10 +4,6 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.luolei.template.config.ApplicationProperties;
-import com.luolei.template.domain.Authority;
-import com.luolei.template.domain.Role;
-import com.luolei.template.domain.User;
-import com.luolei.template.support.Constants;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,6 +30,7 @@ public class TokenProvider {
     public static final String TOKEN_TYPE_KEY = "type";
     public static final String TOKEN_TYPE = "accessToken";
     public static final String REFRESH_TOKEN_TYPE = "refreshToken";
+    public static final String TEMP_TOKEN_TYPE = "tempToken";
     public static final String USER_ID_KEY = "userId";
 
     // jwt 里面默认的key
@@ -58,6 +55,13 @@ public class TokenProvider {
         this.tokenValidityInMillisecondsForRememberMe = 1000 * applicationProperties.getSecurity().getAuthentication().getJwt().getTokenValidityInSecondsForRememberMe();
     }
 
+    public long getTokenValidityInMilliseconds() {
+        return tokenValidityInMilliseconds;
+    }
+
+    public long getTokenValidityInMillisecondsForRememberMe() {
+        return tokenValidityInMillisecondsForRememberMe;
+    }
 
     private static final String DOT = ",";
 
@@ -155,6 +159,42 @@ public class TokenProvider {
     }
 
     /**
+     * 生成一个给定有效期的临时token
+     * @param expiredSecond
+     * @return
+     */
+    public String createTempToken(int expiredSecond) {
+        Date nowDate = new Date();
+        Date expireDate = new Date(nowDate.getTime() + expiredSecond * 1000);
+        return Jwts.builder()
+                .claim(TOKEN_TYPE_KEY, TEMP_TOKEN_TYPE)
+                .setSubject("system")
+                .setIssuedAt(nowDate)
+                .setExpiration(expireDate)
+                .signWith(SignatureAlgorithm.HS512, secretKey)
+                .compact();
+    }
+
+    /**
+     * 生成一个给定有效期的临时token，附带随机数
+     * @param expiredSecond
+     * @param random
+     * @return
+     */
+    public String createTempToken(int expiredSecond, long random) {
+        Date nowDate = new Date();
+        Date expireDate = new Date(nowDate.getTime() + expiredSecond * 1000);
+        return Jwts.builder()
+                .claim(TOKEN_TYPE_KEY, TEMP_TOKEN_TYPE)
+                .claim(RANDOM_KEY, random)
+                .setSubject("system")
+                .setIssuedAt(nowDate)
+                .setExpiration(expireDate)
+                .signWith(SignatureAlgorithm.HS512, secretKey)
+                .compact();
+    }
+
+    /**
      * 验证 token 是否有效
      * @param token
      * @return
@@ -192,11 +232,13 @@ public class TokenProvider {
                 .setSigningKey(secretKey)
                 .parseClaimsJws(token)
                 .getBody();
-
-        Collection<? extends GrantedAuthority> authorities =
-                Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
-                        .map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList());
+        Collection<? extends GrantedAuthority> authorities = Collections.EMPTY_LIST;
+        if (!StrUtil.isBlank(String.valueOf(claims.get(AUTHORITIES_KEY)))) {
+            authorities =
+                    Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
+                            .map(SimpleGrantedAuthority::new)
+                            .collect(Collectors.toList());
+        }
         org.springframework.security.core.userdetails.User principal = new org.springframework.security.core.userdetails.User(claims.getSubject(), "", authorities);
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }

@@ -95,4 +95,51 @@ public interface DefaultValues {
             String key = null;
         }
     }
+
+    interface Cache {
+
+        interface Hazelcast {
+
+            int timeToLiveSeconds = 3600; // 1 hour
+            int backupCount = 1;
+
+            interface ManagementCenter {
+
+                boolean enabled = false;
+                int updateInterval = 3;
+                String url = "";
+            }
+        }
+
+        interface Ehcache {
+
+            int timeToLiveSeconds = 3600; // 1 hour
+            long maxEntries = 100;
+        }
+
+        interface Infinispan {
+
+            String configFile = "default-configs/default-jgroups-tcp.xml";
+            boolean statsEnabled = false;
+
+            interface Local {
+
+                long timeToLiveSeconds = 60; // 1 minute
+                long maxEntries = 100;
+            }
+
+            interface Distributed {
+
+                long timeToLiveSeconds = 60; // 1 minute
+                long maxEntries = 100;
+                int instanceCount = 1;
+            }
+
+            interface Replicated {
+
+                long timeToLiveSeconds = 60; // 1 minute
+                long maxEntries = 100;
+            }
+        }
+    }
 }

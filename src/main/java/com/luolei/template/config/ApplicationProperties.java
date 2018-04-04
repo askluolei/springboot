@@ -25,6 +25,7 @@ public class ApplicationProperties {
     private Security security = new Security();
     private final CorsConfiguration cors = new CorsConfiguration();
     private final Sequence sequence = new Sequence();
+    private final Cache cache = new Cache();
 
     @Data
     public static class Sequence {
@@ -124,6 +125,61 @@ public class ApplicationProperties {
         public static class RememberMe {
             @NotNull
             private String key = DefaultValues.Security.RememberMe.key;
+        }
+    }
+
+    @Data
+    public static class Cache {
+        private final Hazelcast hazelcast = new Hazelcast();
+        private final Ehcache ehcache = new Ehcache();
+        private final Infinispan infinispan = new Infinispan();
+
+        @Data
+        public static class Hazelcast {
+            private int timeToLiveSeconds = DefaultValues.Cache.Hazelcast.timeToLiveSeconds;
+            private int backupCount = DefaultValues.Cache.Hazelcast.backupCount;
+            private final ManagementCenter managementCenter = new ManagementCenter();
+
+            @Data
+            public static class ManagementCenter {
+                private boolean enabled = DefaultValues.Cache.Hazelcast.ManagementCenter.enabled;
+                private int updateInterval = DefaultValues.Cache.Hazelcast.ManagementCenter.updateInterval;
+                private String url =  DefaultValues.Cache.Hazelcast.ManagementCenter.url;
+            }
+        }
+
+        @Data
+        public static class Ehcache {
+            private int timeToLiveSeconds = DefaultValues.Cache.Ehcache.timeToLiveSeconds;
+            private long maxEntries = DefaultValues.Cache.Ehcache.maxEntries;
+        }
+
+        @Data
+        public static class Infinispan {
+            private String configFile = DefaultValues.Cache.Infinispan.configFile;
+            private boolean statsEnabled = DefaultValues.Cache.Infinispan.statsEnabled;
+            private final Local local = new Local();
+            private final Distributed distributed = new Distributed();
+            private final Replicated replicated = new Replicated();
+
+            @Data
+            public static class Local {
+                private long timeToLiveSeconds = DefaultValues.Cache.Infinispan.Local.timeToLiveSeconds;
+                private long maxEntries = DefaultValues.Cache.Infinispan.Local.maxEntries;
+            }
+
+            @Data
+            public static class Distributed {
+                private long timeToLiveSeconds = DefaultValues.Cache.Infinispan.Distributed.timeToLiveSeconds;
+                private long maxEntries = DefaultValues.Cache.Infinispan.Distributed.maxEntries;
+                private int instanceCount = DefaultValues.Cache.Infinispan.Distributed.instanceCount;
+            }
+
+            @Data
+            public static class Replicated {
+                private long timeToLiveSeconds = DefaultValues.Cache.Infinispan.Replicated.timeToLiveSeconds;
+                private long maxEntries = DefaultValues.Cache.Infinispan.Replicated.maxEntries;
+            }
         }
     }
 }

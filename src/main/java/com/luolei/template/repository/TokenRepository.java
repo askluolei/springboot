@@ -43,9 +43,24 @@ public interface TokenRepository extends BaseRepository<Token, Long> {
     List<Token> findAllByExpireTimeBefore(Instant expireTime);
 
     /**
+     * 某个用户名没过期的accessToken数量（也就是同时在线人数）
+     * @param expireTime
+     * @param username
+     * @return
+     */
+    Integer countAllByExpireTimeAfterAndUsernameEquals(Instant expireTime, String username);
+
+    /**
      * 用户id查询
      * @param username
      * @return
      */
     List<Token> findAllByUsername(Long username);
+
+    /**
+     * 删除这个用户的，不是这个 accessToken 的凭证
+     * @param username
+     * @param random
+     */
+    void deleteByUsernameAndRandomNot(String username, Long random);
 }

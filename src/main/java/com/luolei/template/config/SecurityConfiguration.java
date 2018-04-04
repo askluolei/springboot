@@ -5,6 +5,7 @@ import com.luolei.template.security.jwt.JWTConfigurer;
 import com.luolei.template.security.jwt.TokenProvider;
 import com.luolei.template.support.Constants;
 import org.springframework.beans.factory.BeanInitializationException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -24,6 +25,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.filter.CorsFilter;
 
 import javax.annotation.PostConstruct;
+import javax.cache.CacheManager;
 
 /**
  * @author 罗雷
@@ -39,11 +41,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
     private final UserDetailsService userDetailsService;
-
     private final TokenProvider tokenProvider;
-
     private final CorsFilter corsFilter;
-
     private final SecurityProblemSupport problemSupport;
 
     public SecurityConfiguration(AuthenticationManagerBuilder authenticationManagerBuilder, UserDetailsService userDetailsService,TokenProvider tokenProvider,CorsFilter corsFilter, SecurityProblemSupport problemSupport) {
@@ -52,6 +51,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         this.tokenProvider = tokenProvider;
         this.corsFilter = corsFilter;
         this.problemSupport = problemSupport;
+    }
+
+    private CacheManager cacheManager;
+
+    @Autowired
+    public void setCacheManager(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
     }
 
     /**
@@ -97,7 +103,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/app/**/*.{js,html}")
                 .antMatchers("/i18n/**")
                 .antMatchers("/content/**")
-                .antMatchers("/test/**")
+//                .antMatchers("/test/**")
                 .mvcMatchers("/swagger-ui.html")
                 .antMatchers("/h2-console/**");
     }
@@ -120,7 +126,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/test/**").hasRole(Constants.ROLE_ADMIN)
+                .antMatchers("/test/**").authenticated()
 //                .antMatchers("/api/register").permitAll()
 //                .antMatchers("/api/activate").permitAll()
 //                .antMatchers("/api/authenticate").permitAll()
@@ -142,7 +148,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     private JWTConfigurer securityConfigurerAdapter() {
-        return new JWTConfigurer(tokenProvider);
+        return new JWTConfigurer(tokenProvider, cacheManager.getCache(Constants.CACHE_TOKEN_INVALID));
     }
 
 }

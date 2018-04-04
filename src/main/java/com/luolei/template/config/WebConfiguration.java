@@ -62,4 +62,5 @@ public class WebConfiguration implements WebMvcConfigurer {
     public Sequence sequence() {
         return new Sequence(applicationProperties.getSequence().getWorkerId(), applicationProperties.getSequence().getDatacenterId());
     }
+
 }

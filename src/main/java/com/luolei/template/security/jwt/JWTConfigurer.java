@@ -5,6 +5,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import javax.cache.Cache;
+
 /**
  * @author 罗雷
  * @date 2018/4/2 0002
@@ -17,14 +19,16 @@ public class JWTConfigurer extends SecurityConfigurerAdapter<DefaultSecurityFilt
     public static final String AUTHORIZATION_TOKEN = "access_token";
 
     private TokenProvider tokenProvider;
+    Cache<String, String> tokenCache;
 
-    public JWTConfigurer(TokenProvider tokenProvider) {
+    public JWTConfigurer(TokenProvider tokenProvider, Cache<String, String> tokenCache) {
         this.tokenProvider = tokenProvider;
+        this.tokenCache = tokenCache;
     }
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        JWTFilter customFilter = new JWTFilter(tokenProvider);
+        JWTFilter customFilter = new JWTFilter(tokenProvider, tokenCache);
         http.addFilterBefore(customFilter, UsernamePasswordAuthenticationFilter.class);
     }
 }

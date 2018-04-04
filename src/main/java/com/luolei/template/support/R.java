@@ -46,6 +46,7 @@ public class R {
 
     public static final String AUTHENTICATION_ERROR = "authentication_error";
     public static final String AUTHORIZATION_ERROR = "authorization_error";
+    public static final String FORCE_OFFLINE = "force_offline";
 
 
 
@@ -68,6 +69,7 @@ public class R {
         put(FILE_NOT_EXIST, "待下载的文件不存在");
         put(AUTHENTICATION_ERROR, "认证异常");
         put(AUTHORIZATION_ERROR, "授权异常");
+        put(FORCE_OFFLINE, "被踢下线");
     }
 
     static void put(String key, String value) {
@@ -153,6 +155,22 @@ public class R {
             this.data = new HashMap<>(5);
         }
         this.data.put(key, data);
+        return this;
+    }
+
+    public R data(Object data) {
+        if (Objects.isNull(this.data)) {
+            this.data = new HashMap<>(5);
+        }
+        this.data.put(SINGLE_DATA_KEY, data);
+        return this;
+    }
+
+    public R data(Map<String, Object> data) {
+        if (Objects.isNull(this.data)) {
+            this.data = new HashMap<>(5);
+        }
+        this.data.putAll(data);
         return this;
     }
 }
