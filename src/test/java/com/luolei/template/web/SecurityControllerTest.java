@@ -47,6 +47,49 @@ public class SecurityControllerTest {
                 .build();
     }
 
+    @Test
+    public void testAnnotationOnType() throws Exception {
+        mockMvc.perform(get("/api/security2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("authentication_error"));
+
+        LoginVM loginVM = new LoginVM();
+        loginVM.setUsername("admin");
+        loginVM.setPassword("admin");
+        loginVM.setRememberMe(false);
+        String contentAsString = mockMvc.perform(post("/api/authenticate")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(JSON.toJSONString(loginVM)))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        JSONObject jsonObject = JSON.parseObject(contentAsString);
+        String accessToken = jsonObject.getJSONObject("data").getJSONObject("data").getString("accessToken");
+        assertThat(accessToken).isNotBlank();
+
+        mockMvc.perform(get("/api/security2")
+                .header("Authorization","Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("authorization_error"));
+
+        loginVM = new LoginVM();
+        loginVM.setUsername("user");
+        loginVM.setPassword("user");
+        loginVM.setRememberMe(false);
+        contentAsString = mockMvc.perform(post("/api/authenticate")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(JSON.toJSONString(loginVM)))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        jsonObject = JSON.parseObject(contentAsString);
+        accessToken = jsonObject.getJSONObject("data").getJSONObject("data").getString("accessToken");
+        assertThat(accessToken).isNotBlank();
+
+        mockMvc.perform(get("/api/security2")
+                .header("Authorization","Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("success"));
+    }
+
     /**
      * 先不认证访问，返回未认证用户访问受限资源异常
      * 然后普通用户 user 有 p1 p4 权限

@@ -1,6 +1,7 @@
 package com.luolei.template.repository;
 
 import com.luolei.template.domain.User;
+import com.luolei.template.security.support.EntityResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -14,6 +15,7 @@ import java.util.Optional;
  * @author luolei
  * @createTime 2018-03-28 22:22
  */
+@EntityResource
 public interface UserRepository extends BaseRepository<User, Long> {
 
     /**

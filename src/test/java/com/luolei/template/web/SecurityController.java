@@ -1,4 +1,4 @@
-package com.luolei.template.web.controller;
+package com.luolei.template.web;
 
 import com.luolei.template.security.support.HasPermission;
 import com.luolei.template.security.support.HasRole;
