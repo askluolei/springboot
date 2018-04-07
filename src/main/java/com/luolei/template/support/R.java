@@ -67,8 +67,8 @@ public class R {
         put(INTERNAL_ERROR, "未预期的系统内部异常");
         put(NOT_IMPLEMENTED, "未实现的功能");
         put(FILE_NOT_EXIST, "待下载的文件不存在");
-        put(AUTHENTICATION_ERROR, "认证异常");
-        put(AUTHORIZATION_ERROR, "授权异常");
+        put(AUTHENTICATION_ERROR, "未认证用户访问受限资源");
+        put(AUTHORIZATION_ERROR, "认证用户权限不足");
         put(FORCE_OFFLINE, "被踢下线");
     }
 

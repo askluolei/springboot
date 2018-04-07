@@ -1,6 +1,10 @@
 package com.luolei.template.repository;
 
 import com.luolei.template.domain.Token;
+import com.luolei.template.domain.support.AuthType;
+import com.luolei.template.domain.support.RequestPlatform;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.Instant;
 import java.util.List;
@@ -27,6 +31,20 @@ public interface TokenRepository extends BaseRepository<Token, Long> {
      * @return
      */
     Optional<Token> findOneByRefreshToken(String refreshToken);
+
+    /**
+     * 查询用户名，登录ip，登录平台，还有效的token，有效期最长的
+     * 这个方法的名字有点长
+     * 不会在 query 里面查询 top1 或者 first 很尴尬
+     * @param username
+     * @param loginIp
+     * @param platform
+     * @param authType
+     * @param expireTime
+     * @return
+     */
+    Optional<Token> findFirstByUsernameAndLoginIpAndPlatformAndAuthTypeAndExpireTimeAfterOrderByExpireTimeDesc(
+            String username, String loginIp, RequestPlatform platform, AuthType authType, Instant expireTime);
 
     /**
      * random 查询

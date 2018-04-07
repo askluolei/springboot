@@ -199,9 +199,15 @@ public class TokenProvider {
      * @param token
      * @return
      */
-    public boolean validateToken(String token) {
+    public boolean validateToken(String token, String tokenType) {
         try {
-            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            Claims claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
+            /**
+             * token 还
+             */
+            if (!claims.containsKey(TOKEN_TYPE_KEY) || !claims.get(TOKEN_TYPE_KEY).equals(tokenType)) {
+                return false;
+            }
             return true;
         } catch (SignatureException e) {
             log.info("Invalid JWT signature.");
@@ -233,7 +239,7 @@ public class TokenProvider {
                 .parseClaimsJws(token)
                 .getBody();
         Collection<? extends GrantedAuthority> authorities = Collections.EMPTY_LIST;
-        if (!StrUtil.isBlank(String.valueOf(claims.get(AUTHORITIES_KEY)))) {
+        if (claims.containsKey(AUTHORITIES_KEY)) {
             authorities =
                     Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
                             .map(SimpleGrantedAuthority::new)

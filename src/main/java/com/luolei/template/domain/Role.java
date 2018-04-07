@@ -37,8 +37,11 @@ public class Role extends AbstractAuditingEntity implements Serializable {
     @Column(name = "c_explanation")
     private String explanation;
 
+    /**
+     * 获取角色后，通常会要拿权限，直接加载
+     */
     @JsonIgnore
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "t_role_authority",
             joinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "authority_id", referencedColumnName = "id")})

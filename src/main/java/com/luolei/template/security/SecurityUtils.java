@@ -1,6 +1,7 @@
 package com.luolei.template.security;
 
 import com.luolei.template.support.Constants;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,6 +16,15 @@ import java.util.Optional;
 public final class SecurityUtils {
 
     private SecurityUtils() {
+    }
+
+    /**
+     * 获取认证信息
+     * @return
+     */
+    public static Optional<Authentication> getAuthentication() {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        return Optional.ofNullable(securityContext.getAuthentication());
     }
 
     /**
@@ -69,7 +79,7 @@ public final class SecurityUtils {
      * @param authority the authority to check
      * @return true if the current user has the authority, false otherwise
      */
-    public static boolean isCurrentUserInRole(String authority) {
+    public static boolean isCurrentUserInAuthority(String authority) {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         return Optional.ofNullable(securityContext.getAuthentication())
                 .map(authentication -> authentication.getAuthorities().stream()

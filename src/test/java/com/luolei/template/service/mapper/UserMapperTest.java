@@ -14,6 +14,8 @@ import org.junit.Test;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.assertj.core.api.Java6Assertions.assertThat;
+
 /**
  * @author 罗雷
  * @date 2018/4/3 0003
@@ -74,5 +76,6 @@ public class UserMapperTest {
     public void test() {
         UserDto userDto = userMapper.fromUser(user);
         log.info(userDto.toString());
+        assertThat(userDto.getUsername()).isEqualTo("admin");
     }
 }

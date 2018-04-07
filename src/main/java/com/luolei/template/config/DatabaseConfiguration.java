@@ -1,5 +1,8 @@
 package com.luolei.template.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.luolei.template.config.audit.AsyncEntityAuditEventWriter;
+import com.luolei.template.repository.EntityAuditEventRepository;
 import com.luolei.template.support.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -65,4 +68,5 @@ public class DatabaseConfiguration {
             throw new RuntimeException("Unchecked exception in org.h2.tools.Server.createTcpServer()", t);
         }
     }
+
 }

@@ -16,12 +16,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.cache.Cache;
 import javax.cache.CacheManager;
 import java.time.Instant;
+import java.util.Optional;
 
 /**
  * 认证 service
@@ -39,7 +41,7 @@ public class JwtService {
     private final TokenMapper tokenMapper;
     private final Cache<String, String> tokenCache;
 
-    public JwtService(TokenProvider tokenProvider, AuthenticationManager authenticationManager, Sequence sequence, TokenRepository tokenRepository, TokenMapper tokenMapper, CacheManager cacheManager) {
+    public JwtService(TokenProvider tokenProvider, AuthenticationManager authenticationManager, Sequence sequence, TokenRepository tokenRepository, TokenMapper tokenMapper, CacheManager cacheManager, PasswordEncoder passwordEncoder) {
         this.tokenProvider = tokenProvider;
         this.authenticationManager = authenticationManager;
         this.sequence = sequence;
@@ -59,23 +61,33 @@ public class JwtService {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
         Authentication authentication = this.authenticationManager.authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        Token token = new Token();
-        token.setLoginIP(ip);
-        token.setAuthType(AuthType.USER_PASS);
-        token.setPlatform(platform);
-        token.setUsername(username);
-        long random = sequence.nextId();
-        token.setRandom(random);
-        String accessToken = tokenProvider.createAccessToken(authentication, random);
-        token.setExpireTime(Instant.now().plusMillis(tokenProvider.getTokenValidityInMilliseconds()));
-        log.debug("accessToken:{}", accessToken);
-        token.setAccessToken(accessToken);
-        if (rememberMe) {
-            String refreshToken = tokenProvider.createRefreshToken(authentication, random);
-            log.debug("refreshToken:{}", refreshToken);
-            token.setRefreshToken(refreshToken);
+        Optional<Token> optional = tokenRepository.findFirstByUsernameAndLoginIpAndPlatformAndAuthTypeAndExpireTimeAfterOrderByExpireTimeDesc(username, ip, platform, AuthType.USER_PASS, Instant.now());
+        Token token = null;
+        /**
+         * 相同帐号密码，相同ip，相同请求平台
+         * 不在重复生成token
+         */
+        if (optional.isPresent()) {
+            token = optional.get();
+        } else {
+            token = new Token();
+            token.setLoginIp(ip);
+            token.setAuthType(AuthType.USER_PASS);
+            token.setPlatform(platform);
+            token.setUsername(username);
+            long random = sequence.nextId();
+            token.setRandom(random);
+            String accessToken = tokenProvider.createAccessToken(authentication, random);
+            token.setExpireTime(Instant.now().plusMillis(tokenProvider.getTokenValidityInMilliseconds()));
+            log.debug("accessToken:{}", accessToken);
+            token.setAccessToken(accessToken);
+            if (rememberMe) {
+                String refreshToken = tokenProvider.createRefreshToken(authentication, random);
+                log.debug("refreshToken:{}", refreshToken);
+                token.setRefreshToken(refreshToken);
+            }
+            token = tokenRepository.save(token);
         }
-        token = tokenRepository.save(token);
         TokenDto tokenDto = tokenMapper.fromToken(token);
         String tempToken = tokenProvider.createTempToken(Constants.OFFLINE_EXPIRED_SECOND);
         tokenDto.setOfflineToken(tempToken);
@@ -92,7 +104,7 @@ public class JwtService {
      */
     @Transactional
     public TokenDto offline(String token, String tempToken) {
-        if (!tokenProvider.validateToken(tempToken)) {
+        if (!tokenProvider.validateToken(tempToken, TokenProvider.TEMP_TOKEN_TYPE)) {
             throw new BaseException("踢人凭证无效，无法执行踢人操作");
         }
         String username = SecurityUtils.getCurrentUserLogin().orElseThrow(() -> new BaseException("无法获取当前登录的用户名"));

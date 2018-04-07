@@ -1,5 +1,6 @@
 package com.luolei.template.config;
 
+import com.luolei.template.aop.AuthorityAspect;
 import com.luolei.template.security.SecurityProblemSupport;
 import com.luolei.template.security.jwt.JWTConfigurer;
 import com.luolei.template.security.jwt.TokenProvider;
@@ -90,6 +91,15 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     /**
+     * 自定义安全注解 AOP 配置
+     * @return
+     */
+    @Bean
+    public AuthorityAspect authorityAspect() {
+        return new AuthorityAspect();
+    }
+
+    /**
      * 配置忽略安全的url
      * 这里的配置优先
      * 下面的 httpsecurity 配置优先级在后面
@@ -126,14 +136,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/test/**").authenticated()
+                .antMatchers("/test/**").permitAll()
 //                .antMatchers("/api/register").permitAll()
 //                .antMatchers("/api/activate").permitAll()
-//                .antMatchers("/api/authenticate").permitAll()
+                .antMatchers("/api/authenticate").permitAll()
 //                .antMatchers("/api/account/reset-password/init").permitAll()
 //                .antMatchers("/api/account/reset-password/finish").permitAll()
 //                .antMatchers("/api/profile-info").permitAll()
-//                .antMatchers("/api/**").authenticated()
+                .antMatchers("/api/**").authenticated()
 //                .antMatchers("/websocket/tracker").hasAuthority(Constants.ROLE_ADMIN)
 //                .antMatchers("/websocket/**").permitAll()
 //                .antMatchers("/management/health").permitAll()

@@ -1,5 +1,6 @@
 package com.luolei.template.support;
 
+import com.luolei.template.error.AuthorizationException;
 import com.luolei.template.error.BaseException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.AuthenticationException;
@@ -24,6 +25,18 @@ import static com.luolei.template.support.R.*;
 @Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(AuthorizationException.class)
+    @ResponseBody
+    public R handleAll(AuthorizationException e, WebRequest request) {
+        log.error("认证用户权限不足", e);
+        if (isDebug(request)) {
+            return R.error(AUTHORIZATION_ERROR, e);
+        } else {
+            return R.error(AUTHORIZATION_ERROR, e.getMessage());
+        }
+    }
+
     /**
      * 处理自定义业务异常
      *
@@ -104,7 +117,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AuthenticationException.class)
     @ResponseBody
     public R handleAll(AuthenticationException e, WebRequest request) {
-        log.error("认证异常", e);
+        log.error("未认证用户访问受限资源", e);
         if (isDebug(request)) {
             return R.error(AUTHENTICATION_ERROR, e);
         } else {

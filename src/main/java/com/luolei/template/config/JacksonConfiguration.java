@@ -39,7 +39,7 @@ public class JacksonConfiguration implements WebMvcConfigurer {
         converters.add(0, jackson2HttpMessageConverter);
 
         //可以通过配置文件配置
-//        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         objectMapper.registerModule(new JavaTimeModule());
     }
 }

@@ -28,7 +28,7 @@ public class RequestPlatformResolver implements HandlerMethodArgumentResolver {
     public Object resolveArgument(MethodParameter parameter, @Nullable ModelAndViewContainer mavContainer, NativeWebRequest webRequest, @Nullable WebDataBinderFactory binderFactory) throws Exception {
         String header = webRequest.getHeader("User-Agent");
         RequestPlatform platform = RequestPlatform.UNKNOWN;
-        if (StrUtil.isBlank(header)) {
+        if (StrUtil.isNotBlank(header)) {
             if(header.contains("iPhone")||header.contains("iPod")||header.contains("iPad")){
                 platform = RequestPlatform.IOS;
             } else if(header.contains("Android") || header.contains("Linux")) {

@@ -36,7 +36,6 @@ public class Authority extends AbstractAuditingEntity implements Serializable {
     @Column(length = 50, unique = true, nullable = false)
     private String authority;
 
-    @NotBlank
     @Column(length = 50, nullable = false)
     private String authorityCn;
 

@@ -83,7 +83,7 @@ public class Token extends AbstractAuditingEntity {
      * 最好不要自定义参数,能够用http头中的信息最好
      */
     @Column(name = "login_ip")
-    private String loginIP;
+    private String loginIp;
 
     /**
      * 用户名

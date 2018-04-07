@@ -15,6 +15,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
+import static com.luolei.template.security.jwt.TokenProvider.TOKEN_TYPE;
 import static com.luolei.template.support.R.FORCE_OFFLINE;
 
 /**
@@ -36,7 +37,7 @@ public class JWTFilter extends GenericFilterBean {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         String jwt = resolveToken(httpServletRequest);
-        if (StringUtils.hasText(jwt) && this.tokenProvider.validateToken(jwt)) {
+        if (StringUtils.hasText(jwt) && this.tokenProvider.validateToken(jwt, TOKEN_TYPE)) {
             Authentication authentication = this.tokenProvider.getAuthentication(jwt);
             String username = tokenProvider.getUsername(jwt);
             /**
