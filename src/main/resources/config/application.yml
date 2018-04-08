@@ -10,7 +10,23 @@ management:
         # 开启一些 http 接口 url 出来
         include: health,info,auditevents,beans,conditions,configprops,env,health,heapdump,httptrace,loggers,metrics,mappings,threaddump
 
-
 spring:
   profiles:
     active: dev
+  datasource:
+    druid:
+      # 配置初始化大小、最小、最大
+      initial-size: 1
+      min-idle: 1
+      max-active: 20
+      # 配置获取连接等待超时的时间
+      max-wait: 60000
+      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      time-between-eviction-runs-millis: 60000
+      # 配置一个连接在池中最小生存的时间，单位是毫秒
+      min-evictable-idle-time-millis: 300000
+      # 检查
+      validation-query: SELECT 'x'
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false

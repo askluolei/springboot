@@ -81,4 +81,11 @@ public interface TokenRepository extends BaseRepository<Token, Long> {
      * @param random
      */
     void deleteByUsernameAndRandomNot(String username, Long random);
+
+    /**
+     * random 计数
+     * @param random
+     * @return
+     */
+    Integer countByRandom(long random);
 }

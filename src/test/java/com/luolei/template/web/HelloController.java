@@ -1,4 +1,4 @@
-package com.luolei.template.web.controller;
+package com.luolei.template.web;
 
 import com.luolei.template.error.BaseException;
 import com.luolei.template.support.R;

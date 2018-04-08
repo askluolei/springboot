@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
+import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -45,6 +46,40 @@ public class UserJwtControllerTest {
                 .webAppContextSetup(webApplicationContext)
                 .apply(springSecurity())
                 .build();
+    }
+
+    @Test
+    public void authorizeByRefreshToken() throws Exception {
+        LoginVM loginVM = new LoginVM();
+        loginVM.setUsername("user");
+        loginVM.setPassword("user");
+        loginVM.setRememberMe(true);
+        String response = mockMvc.perform(post("/api/authenticate")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(JSON.toJSONString(loginVM)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("success"))
+                .andExpect(jsonPath("$.data.data.accessToken").isString())
+                .andExpect(jsonPath("$.data.data.refreshToken").isString())
+                .andReturn().getResponse().getContentAsString();
+
+        JSONObject jsonObject = JSON.parseObject(response);
+        String accessToken = jsonObject.getJSONObject("data").getJSONObject("data").getString("accessToken");
+        String refreshToken = jsonObject.getJSONObject("data").getJSONObject("data").getString("refreshToken");
+
+        loginVM = new LoginVM();
+        loginVM.setRefreshToken(refreshToken);
+        String response2 = mockMvc.perform(post("/api/refreshToken")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(JSON.toJSONString(loginVM)))
+                .andExpect(jsonPath("$.code").value("success"))
+                .andExpect(jsonPath("$.data.data.accessToken").isString())
+                .andExpect(jsonPath("$.data.data.refreshToken").doesNotExist())
+                .andReturn().getResponse().getContentAsString();
+
+        JSONObject jsonObject2 = JSON.parseObject(response2);
+        String accessToken2 = jsonObject2.getJSONObject("data").getJSONObject("data").getString("accessToken");
+        assertThat(accessToken).isEqualTo(accessToken2);
     }
 
     /**

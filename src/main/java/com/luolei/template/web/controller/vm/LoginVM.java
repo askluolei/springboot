@@ -24,4 +24,7 @@ public class LoginVM {
     private String password;
 
     private Boolean rememberMe;
+
+    private String refreshToken;
+
 }

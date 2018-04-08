@@ -14,15 +14,27 @@ spring:
   datasource:
     platform: h2
     continue-on-error: true
-    type: com.zaxxer.hikari.HikariDataSource
+    type: com.alibaba.druid.pool.DruidDataSource
+    #type: com.zaxxer.hikari.HikariDataSource
     #url: jdbc:h2:file:./target/h2db/db/start;DB_CLOSE_DELAY=-1
-    url: jdbc:h2:mem:template;DB_CLOSE_DELAY=-1
-    username: template
-    password:
+    #url: jdbc:h2:mem:template;DB_CLOSE_DELAY=-1
+    #username: template
+    #password:
+    druid:
+      url: jdbc:h2:mem:template;DB_CLOSE_DELAY=-1
+      username: template
+      password:
+      stat-view-servlet:
+        enabled: true
+        url-pattern: /druid/*
+        login-username: admin
+        login-password: admin
+      filter:
+
   jpa:
     open-in-view: false
     generate-ddl: true
-    show-sql: true
+    show-sql: false
     hibernate:
       ddl-auto: create-drop
 

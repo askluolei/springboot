@@ -36,6 +36,19 @@ public class UserJwtController {
     }
 
     /**
+     * 使用refreshToken 换取凭证
+     * @param platform
+     * @param ip
+     * @param loginVM
+     * @return
+     */
+    @PostMapping("/refreshToken")
+    public R refreshToken(RequestPlatform platform, @RequestIP String ip, @RequestBody LoginVM loginVM) {
+        Preconditions.checkArgument(StrUtil.isNotBlank(loginVM.getRefreshToken()), "请求参数不合法");
+        return R.ok(jwtService.authorize(loginVM.getRefreshToken(), platform, ip));
+    }
+
+    /**
      * 用户认证
      * 返回accessToken,
      * 如果rememberMe，则还有 refreshToken

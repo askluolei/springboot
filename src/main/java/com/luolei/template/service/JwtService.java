@@ -1,5 +1,6 @@
 package com.luolei.template.service;
 
+import cn.hutool.core.util.StrUtil;
 import com.luolei.template.domain.Token;
 import com.luolei.template.domain.support.AuthType;
 import com.luolei.template.domain.support.RequestPlatform;
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.cache.Cache;
 import javax.cache.CacheManager;
 import java.time.Instant;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -48,6 +50,58 @@ public class JwtService {
         this.tokenRepository = tokenRepository;
         this.tokenMapper = tokenMapper;
         this.tokenCache = cacheManager.getCache(Constants.CACHE_TOKEN_INVALID);
+    }
+
+    /**
+     * 使用refreshToken 换取凭证
+     * @param refreshToken
+     * @param platform
+     * @param ip
+     * @return
+     */
+    public TokenDto authorize(String refreshToken, RequestPlatform platform, String ip) {
+        boolean isValid = tokenProvider.validateToken(refreshToken, TokenProvider.REFRESH_TOKEN_TYPE);
+        if (!isValid) {
+            throw new BaseException("不合法的凭证");
+        }
+        long random = tokenProvider.getRamdom(refreshToken);
+        String username = tokenProvider.getUsername(refreshToken);
+        Integer countByRandom = tokenRepository.countByRandom(random);
+        if (Objects.isNull(countByRandom) || countByRandom == 0) {
+            throw new BaseException("可能被踢出了");
+        }
+        /**
+         * 防止重复生成token，如果之前的token 有效期还没过一半，就直接返回这个
+         * 有个问题，就是，如果用户的权限做了修改，那token里面的信息没更新
+         * 要想获取最新权限，必须得重新认证，这也是很正常的情况，当使用refreshToken 换凭证的时候，当时认证的权限是咋样的，那就是咋样的
+         */
+        Optional<Token> optional = tokenRepository.findFirstByUsernameAndLoginIpAndPlatformAndAuthTypeAndExpireTimeAfterOrderByExpireTimeDesc(username, ip, platform, AuthType.REFRESH_TOKEN, Instant.now().plusMillis(this.tokenProvider.getTokenValidityInMilliseconds() / 2));
+        if (optional.isPresent()) {
+            TokenDto tokenDto = tokenMapper.fromToken(optional.get());
+            tokenDto.setOnlineCount(tokenRepository.countAllByExpireTimeAfterAndUsernameEquals(Instant.now(), username));
+            return tokenDto;
+        }
+        /**
+         * 这里的权限，还是使用 以前的权限，如果有修改，是看不到的
+         */
+        Authentication authentication = tokenProvider.getAuthentication(refreshToken);
+        Token token = new Token();
+        token.setLoginIp(ip);
+        token.setAuthType(AuthType.REFRESH_TOKEN);
+        token.setPlatform(platform);
+        token.setRandom(random);
+        token.setExpireTime(Instant.now().plusMillis(tokenProvider.getTokenValidityInMilliseconds()));
+        token.setAccessToken(tokenProvider.createAccessToken(authentication, random));
+        token.setRefreshToken(refreshToken);
+
+        TokenDto tokenDto = tokenMapper.fromToken(token);
+        tokenDto.setOnlineCount(tokenRepository.countAllByExpireTimeAfterAndUsernameEquals(Instant.now(), username));
+
+        /**
+         * 这里refreshToken 不返回，减少refreshToken 在网络中的传输次数
+         */
+        tokenDto.setRefreshToken(null);
+        return tokenDto;
     }
 
     /**

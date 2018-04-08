@@ -45,5 +45,5 @@ public interface Constants {
     /**
      * biz
      */
-    int OFFLINE_EXPIRED_SECOND = 100;
+    int OFFLINE_EXPIRED_SECOND = 10;
 }
