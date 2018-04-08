@@ -1,12 +1,16 @@
 package com.luolei.template.web;
 
 import com.luolei.template.Application;
+import com.luolei.template.repository.AuthorityRepository;
+import com.luolei.template.repository.RoleRepository;
+import com.luolei.template.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -31,10 +35,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
 @Transactional
-public class HelloControllerTest {
+public class HelloControllerTest implements DataInit {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
+
+    @Autowired
+    private AuthorityRepository authorityRepository;
+    @Autowired
+    private RoleRepository roleRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     private MockMvc mockMvc;
 
@@ -44,6 +57,7 @@ public class HelloControllerTest {
                 .webAppContextSetup(webApplicationContext)
                 .apply(springSecurity())
                 .build();
+        init(authorityRepository, roleRepository, userRepository, passwordEncoder);
     }
 
     @Test

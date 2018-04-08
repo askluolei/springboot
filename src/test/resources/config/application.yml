@@ -14,19 +14,69 @@ spring:
   datasource:
     platform: h2
     continue-on-error: true
+#    type: com.alibaba.druid.pool.DruidDataSource
     type: com.zaxxer.hikari.HikariDataSource
     #url: jdbc:h2:file:./target/h2db/db/start;DB_CLOSE_DELAY=-1
     url: jdbc:h2:mem:template;DB_CLOSE_DELAY=-1
     username: template
     password:
+    # 详细配置参考 https://github.com/alibaba/druid/tree/master/druid-spring-boot-starter
+    druid:
+      url: jdbc:h2:mem:template;DB_CLOSE_DELAY=-1
+      username: template
+      # password 使用druid 的加密类生成的，修改pom文件插件，exec 的参数（你的密码明文）直接使用命令 mvn exec:java 就可以得到公钥和密码密文了
+      password: QBWjmVxWy75Am7TPYQRw6j4Ae2AJRVAES7M032G6qnjFrYeMap0LOn55tHQ4dzpJ7LWrRRPGzvsWEQIfYlUImQ==
+      # 监控记录定期输出到日志
+      time-between-log-stats-millis: 300000
+      stat-view-servlet:
+        enabled: true
+        url-pattern: /druid/*
+        login-username: admin
+        login-password: admin
+      # filters: slf4j, stat
+      filter:
+        # 超过3s 的sql 记录下来，详细配置参考 https://github.com/alibaba/druid/wiki/%E9%85%8D%E7%BD%AE_StatFilter
+        stat:
+          enabled: true
+          log-slow-sql: true
+          slow-sql-millis: 3000
+        # slf4j 日志打印，修改默认配置，直接打印可执行的sql语句，很长的字段值不会直接打印出来的
+        # 具体配置在 com.alibaba.druid.filter.logging.LogFilter 里面
+        slf4j:
+          enabled: true
+          statement-create-after-log-enabled: false
+          statement-prepare-after-log-enabled: false
+          statement-prepare-call-after-log-enabled: false
+          statement-execute-after-log-enabled: false
+          statement-execute-query-after-log-enabled: false
+          statement-execute-update-after-log-enabled: false
+          statement-execute-batch-after-log-enabled: false
+          statement-executable-sql-log-enable: true
+          statement-close-after-log-enabled: false
+          statement-parameter-clear-log-enable: false
+          statement-parameter-set-log-enabled: false
+        # sql 防火墙 ,详细配置参考 https://github.com/alibaba/druid/wiki/%E9%85%8D%E7%BD%AE-wallfilter
+        wall:
+          # 开发阶段关掉，因为是内存数据库，启动应用的时候删表，建表，通不过防火墙默认配置
+          enabled: false
+          config:
+            # 检查delete是否无where条件（那就是清空表了）
+            deleteWhereNoneCheck: true
+        config:
+          enabled: true
+      connect-properties:
+        - config.decrypt: true
+        - config.decrypt.key: ${public-key}
+
   jpa:
     open-in-view: false
     generate-ddl: true
-    show-sql: true
+    show-sql: false
     hibernate:
       ddl-auto: create-drop
-  profiles:
-      active: dev
+
+# druid 生成的公钥
+public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBALfTZnUqLPc7MoTKT65uclF/qMF6sJ8+4nKcvgwmCl4/T8ah/H5Ba/DyzbHUmmTA/QD579yX/CR9hwPJGrCD5z8CAwEAAQ==
 
 info:
   project:

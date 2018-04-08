@@ -227,6 +227,29 @@
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
+            <!-- 执行插件，用来生成数据库密码的密文，配置druid数据库连接池 -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <mainClass>com.alibaba.druid.filter.config.ConfigTools</mainClass>
+                    <arguments>
+                        <argument>123456</argument>
+                    </arguments>
+                </configuration>
+            </plugin>
+            <!-- 测试套件 mvn surefire:test ，运行以Test 开头和结尾的测试类，当然，也可以自定义测试哪些 includes/include  excludes/exclude -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
         </plugins>
     </build>
 </project>
