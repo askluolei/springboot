@@ -73,13 +73,13 @@ public class UserJwtControllerTest  implements DataInit {
                 .content(JSON.toJSONString(loginVM)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("success"))
-                .andExpect(jsonPath("$.data.data.accessToken").isString())
-                .andExpect(jsonPath("$.data.data.refreshToken").isString())
+                .andExpect(jsonPath("$.data.accessToken").isString())
+                .andExpect(jsonPath("$.data.refreshToken").isString())
                 .andReturn().getResponse().getContentAsString();
 
         JSONObject jsonObject = JSON.parseObject(response);
-        String accessToken = jsonObject.getJSONObject("data").getJSONObject("data").getString("accessToken");
-        String refreshToken = jsonObject.getJSONObject("data").getJSONObject("data").getString("refreshToken");
+        String accessToken = jsonObject.getJSONObject("data").getString("accessToken");
+        String refreshToken = jsonObject.getJSONObject("data").getString("refreshToken");
 
         loginVM = new LoginVM();
         loginVM.setRefreshToken(refreshToken);
@@ -87,12 +87,12 @@ public class UserJwtControllerTest  implements DataInit {
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(JSON.toJSONString(loginVM)))
                 .andExpect(jsonPath("$.code").value("success"))
-                .andExpect(jsonPath("$.data.data.accessToken").isString())
-                .andExpect(jsonPath("$.data.data.refreshToken").doesNotExist())
+                .andExpect(jsonPath("$.data.accessToken").isString())
+                .andExpect(jsonPath("$.data.refreshToken").doesNotExist())
                 .andReturn().getResponse().getContentAsString();
 
         JSONObject jsonObject2 = JSON.parseObject(response2);
-        String accessToken2 = jsonObject2.getJSONObject("data").getJSONObject("data").getString("accessToken");
+        String accessToken2 = jsonObject2.getJSONObject("data").getString("accessToken");
         assertThat(accessToken).isEqualTo(accessToken2);
     }
 
@@ -111,8 +111,8 @@ public class UserJwtControllerTest  implements DataInit {
                 .content(JSON.toJSONString(loginVM)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("success"))
-                .andExpect(jsonPath("$.data.data.accessToken").isString())
-                .andExpect(jsonPath("$.data.data.refreshToken").doesNotExist());
+                .andExpect(jsonPath("$.data.accessToken").isString())
+                .andExpect(jsonPath("$.data.refreshToken").doesNotExist());
     }
 
     /**
@@ -129,7 +129,7 @@ public class UserJwtControllerTest  implements DataInit {
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(JSON.toJSONString(loginVM)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value("authentication_error"));
+                .andExpect(jsonPath("$.code").value("login_error"));
     }
 
     /**
@@ -146,7 +146,7 @@ public class UserJwtControllerTest  implements DataInit {
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(JSON.toJSONString(loginVM)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value("authentication_error"));
+                .andExpect(jsonPath("$.code").value("login_error"));
     }
 
     /**
@@ -164,8 +164,8 @@ public class UserJwtControllerTest  implements DataInit {
                 .content(JSON.toJSONString(loginVM)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("success"))
-                .andExpect(jsonPath("$.data.data.accessToken").isString())
-                .andExpect(jsonPath("$.data.data.refreshToken").isString());
+                .andExpect(jsonPath("$.data.accessToken").isString())
+                .andExpect(jsonPath("$.data.refreshToken").isString());
     }
 
     /**
@@ -186,18 +186,18 @@ public class UserJwtControllerTest  implements DataInit {
                 .content(JSON.toJSONString(loginVM)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("success"))
-                .andExpect(jsonPath("$.data.data.accessToken").isString())
-                .andExpect(jsonPath("$.data.data.refreshToken").isString())
-                .andExpect(jsonPath("$.data.data.onlineCount").value(1));
+                .andExpect(jsonPath("$.data.accessToken").isString())
+                .andExpect(jsonPath("$.data.refreshToken").isString())
+                .andExpect(jsonPath("$.data.onlineCount").value(1));
 
         mockMvc.perform(post("/api/authenticate")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(JSON.toJSONString(loginVM)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("success"))
-                .andExpect(jsonPath("$.data.data.accessToken").isString())
-                .andExpect(jsonPath("$.data.data.refreshToken").isString())
-                .andExpect(jsonPath("$.data.data.onlineCount").value(1));
+                .andExpect(jsonPath("$.data.accessToken").isString())
+                .andExpect(jsonPath("$.data.refreshToken").isString())
+                .andExpect(jsonPath("$.data.onlineCount").value(1));
     }
 
     /**
@@ -217,9 +217,9 @@ public class UserJwtControllerTest  implements DataInit {
                 .content(JSON.toJSONString(loginVM)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("success"))
-                .andExpect(jsonPath("$.data.data.accessToken").isString())
-                .andExpect(jsonPath("$.data.data.refreshToken").isString())
-                .andExpect(jsonPath("$.data.data.onlineCount").value(1));
+                .andExpect(jsonPath("$.data.accessToken").isString())
+                .andExpect(jsonPath("$.data.refreshToken").isString())
+                .andExpect(jsonPath("$.data.onlineCount").value(1));
 
         String response = mockMvc.perform(post("/api/authenticate")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -227,13 +227,13 @@ public class UserJwtControllerTest  implements DataInit {
                 .content(JSON.toJSONString(loginVM)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("success"))
-                .andExpect(jsonPath("$.data.data.accessToken").isString())
-                .andExpect(jsonPath("$.data.data.refreshToken").isString())
-                .andExpect(jsonPath("$.data.data.onlineCount").value(2))
+                .andExpect(jsonPath("$.data.accessToken").isString())
+                .andExpect(jsonPath("$.data.refreshToken").isString())
+                .andExpect(jsonPath("$.data.onlineCount").value(2))
                 .andReturn().getResponse().getContentAsString();
         JSONObject jsonObject = JSON.parseObject(response);
-        String accessToken = jsonObject.getJSONObject("data").getJSONObject("data").getString("accessToken");
-        String offlineToken = jsonObject.getJSONObject("data").getJSONObject("data").getString("offlineToken");
+        String accessToken = jsonObject.getJSONObject("data").getString("accessToken");
+        String offlineToken = jsonObject.getJSONObject("data").getString("offlineToken");
 
         /**
          * 这个踢出功能权限太大了，可以将不同平台的都踢出去了
@@ -250,6 +250,6 @@ public class UserJwtControllerTest  implements DataInit {
             .content(JSON.toJSONString(tokenDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("success"))
-                .andExpect(jsonPath("$.data.data.onlineCount").value(1));
+                .andExpect(jsonPath("$.data.onlineCount").value(1));
     }
 }

@@ -1,8 +1,9 @@
 package com.luolei.template.support;
 
-import com.luolei.template.error.AuthorizationException;
+import cn.hutool.core.util.StrUtil;
 import com.luolei.template.error.BaseException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -26,17 +27,6 @@ import static com.luolei.template.support.R.*;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(AuthorizationException.class)
-    @ResponseBody
-    public R handleAll(AuthorizationException e, WebRequest request) {
-        log.error("认证用户权限不足", e);
-        if (isDebug(request)) {
-            return R.error(AUTHORIZATION_ERROR, e);
-        } else {
-            return R.error(AUTHORIZATION_ERROR, e.getMessage());
-        }
-    }
-
     /**
      * 处理自定义业务异常
      *
@@ -46,12 +36,13 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(BaseException.class)
     @ResponseBody
-    public R handleEBException(Exception e, WebRequest request) {
+    public R handleEBException(BaseException e, WebRequest request) {
         log.error("系统内部异常", e);
+        String code = e.getCode();
         if (isDebug(request)) {
-            return R.error(KNOWN_BIZ_ERROR, e);
+            return R.error(StrUtil.isEmpty(code) ? KNOWN_BIZ_ERROR : code, e);
         } else {
-            return R.error(KNOWN_BIZ_ERROR, e.getMessage());
+            return R.error(StrUtil.isEmpty(code) ? KNOWN_BIZ_ERROR : code, e.getMessage());
         }
     }
 
@@ -64,7 +55,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseBody
-    public R handleIllegalArgument(Exception e, WebRequest request) {
+    public R handleIllegalArgument(IllegalArgumentException e, WebRequest request) {
         log.error("参数不合法", e);
         if (isDebug(request)) {
             return R.error(ILLEGAL_ARGUMENT, e);
@@ -105,6 +96,23 @@ public class GlobalExceptionHandler {
             return R.error(INTERNAL_ERROR, e);
         } else {
             return R.error(INTERNAL_ERROR, e.getMessage());
+        }
+    }
+
+    /**
+     * 用户认证失败
+     * @param e
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(BadCredentialsException.class)
+    @ResponseBody
+    public R handleAll(BadCredentialsException e, WebRequest request) {
+        log.error("用户认证失败", e);
+        if (isDebug(request)) {
+            return R.error(LOGIN_ERROR, e);
+        } else {
+            return R.error(LOGIN_ERROR, e.getMessage());
         }
     }
 

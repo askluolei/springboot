@@ -8,6 +8,13 @@ package com.luolei.template.error;
  */
 public class BaseException extends RuntimeException {
 
+    /**
+     * 错误码
+     * R 类里面定义的常量响应码
+     * 如果定义了，那么 R 响应的时候就取这个code，否则就是统一响应码了
+     */
+    private String code;
+
     public BaseException() {
         super();
     }
@@ -22,5 +29,14 @@ public class BaseException extends RuntimeException {
 
     public BaseException(Throwable cause) {
         super(cause);
+    }
+
+    public BaseException withCode(String code) {
+        this.code = code;
+        return this;
+    }
+
+    public String getCode() {
+        return this.code;
     }
 }

@@ -1,12 +1,12 @@
 package com.luolei.template.aop;
 
-import com.luolei.template.error.AuthorizationException;
 import com.luolei.template.error.BaseException;
 import com.luolei.template.security.SecurityUtils;
 import com.luolei.template.security.support.HasPermission;
 import com.luolei.template.security.support.HasRole;
 import com.luolei.template.security.support.JoinType;
 import com.luolei.template.support.Constants;
+import com.luolei.template.support.R;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
@@ -110,12 +110,12 @@ public class AuthorityAspect implements AspectPointcuts {
                     return;
                 }
             }
-            throw new AuthorizationException("权限不足, 需要权限之一:" + Arrays.toString(value));
+            throw new BaseException("权限不足, 需要权限之一:" + Arrays.toString(value)).withCode(R.AUTHORIZATION_ERROR);
         } else {
             for (String permissionValue : value) {
                 boolean hasPermission = SecurityUtils.isCurrentUserInAuthority(permissionValue);
                 if (!hasPermission) {
-                    throw new AuthorizationException("权限不足, 需要权限:" + Arrays.toString(value));
+                    throw new BaseException("权限不足, 需要权限:" + Arrays.toString(value)).withCode(R.AUTHORIZATION_ERROR);
                 }
             }
         }
@@ -140,12 +140,12 @@ public class AuthorityAspect implements AspectPointcuts {
                     return;
                 }
             }
-            throw new AuthorizationException("权限不足, 需要角色之一:" + Arrays.toString(value));
+            throw new BaseException("权限不足, 需要角色之一:" + Arrays.toString(value)).withCode(R.AUTHORIZATION_ERROR);
         } else {
             for (String roleValue : value) {
                 boolean hasRole = SecurityUtils.isCurrentUserInAuthority(Constants.ROLE_PREFIX + roleValue);
                 if (!hasRole) {
-                    throw new AuthorizationException("权限不足, 需要角色:" + Arrays.toString(value));
+                    throw new BaseException("权限不足, 需要角色:" + Arrays.toString(value)).withCode(R.AUTHORIZATION_ERROR);
                 }
             }
         }

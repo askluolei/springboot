@@ -10,6 +10,7 @@ import com.luolei.template.security.SecurityUtils;
 import com.luolei.template.security.jwt.TokenProvider;
 import com.luolei.template.service.mapper.TokenMapper;
 import com.luolei.template.support.Constants;
+import com.luolei.template.support.R;
 import com.luolei.template.utils.Sequence;
 import com.luolei.template.web.dto.TokenDto;
 import lombok.extern.slf4j.Slf4j;
@@ -62,13 +63,13 @@ public class JwtService {
     public TokenDto authorize(String refreshToken, RequestPlatform platform, String ip) {
         boolean isValid = tokenProvider.validateToken(refreshToken, TokenProvider.REFRESH_TOKEN_TYPE);
         if (!isValid) {
-            throw new BaseException("不合法的凭证");
+            throw new BaseException("不合法的凭证").withCode(R.LOGIN_ERROR);
         }
         long random = tokenProvider.getRamdom(refreshToken);
         String username = tokenProvider.getUsername(refreshToken);
         Integer countByRandom = tokenRepository.countByRandom(random);
         if (Objects.isNull(countByRandom) || countByRandom == 0) {
-            throw new BaseException("可能被踢出了");
+            throw new BaseException("可能被踢出了").withCode(R.LOGIN_ERROR);
         }
         /**
          * 防止重复生成token，如果之前的token 有效期还没过一半，就直接返回这个

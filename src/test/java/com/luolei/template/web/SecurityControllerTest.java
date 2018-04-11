@@ -77,7 +77,7 @@ public class SecurityControllerTest implements DataInit {
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
         JSONObject jsonObject = JSON.parseObject(contentAsString);
-        String accessToken = jsonObject.getJSONObject("data").getJSONObject("data").getString("accessToken");
+        String accessToken = jsonObject.getJSONObject("data").getString("accessToken");
         assertThat(accessToken).isNotBlank();
 
         mockMvc.perform(get("/api/security2")
@@ -95,7 +95,7 @@ public class SecurityControllerTest implements DataInit {
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
         jsonObject = JSON.parseObject(contentAsString);
-        accessToken = jsonObject.getJSONObject("data").getJSONObject("data").getString("accessToken");
+        accessToken = jsonObject.getJSONObject("data").getString("accessToken");
         assertThat(accessToken).isNotBlank();
 
         mockMvc.perform(get("/api/security2")
@@ -126,7 +126,7 @@ public class SecurityControllerTest implements DataInit {
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
         JSONObject jsonObject = JSON.parseObject(contentAsString);
-        String accessToken = jsonObject.getJSONObject("data").getJSONObject("data").getString("accessToken");
+        String accessToken = jsonObject.getJSONObject("data").getString("accessToken");
         assertThat(accessToken).isNotBlank();
 
         mockMvc.perform(get("/api/security/authentication")
@@ -187,7 +187,7 @@ public class SecurityControllerTest implements DataInit {
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
         JSONObject jsonObject = JSON.parseObject(contentAsString);
-        String accessToken = jsonObject.getJSONObject("data").getJSONObject("data").getString("accessToken");
+        String accessToken = jsonObject.getJSONObject("data").getString("accessToken");
         assertThat(accessToken).isNotBlank();
 
         mockMvc.perform(get("/api/security/authentication")

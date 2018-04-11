@@ -1,3 +1,5 @@
+
+
 # 项目管理相关
 management:
   endpoints:
@@ -89,3 +91,5 @@ application:
     authentication:
       jwt:
         secret: "mysecret"
+server:
+  port: 8081
