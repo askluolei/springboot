@@ -23,7 +23,7 @@ import java.io.Serializable;
 @Setter
 @ToString
 @Entity
-@Table(name = "jhi_authority")
+@Table(name = "t_authority")
 public class Authority extends AbstractAuditingEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 

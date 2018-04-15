@@ -37,29 +37,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
 @Transactional
-public class UserJwtControllerTest  implements DataInit {
+public class UserJwtControllerTest extends AbstractTest {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
 
-    @Autowired
-    private AuthorityRepository authorityRepository;
-    @Autowired
-    private RoleRepository roleRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
     private MockMvc mockMvc;
 
-    @Before
-    public void setUp() {
+    @Override
+    public void before() throws Exception {
         this.mockMvc = MockMvcBuilders
                 .webAppContextSetup(webApplicationContext)
                 .apply(springSecurity())
                 .build();
-        init(authorityRepository, roleRepository, userRepository, passwordEncoder);
     }
 
     @Test

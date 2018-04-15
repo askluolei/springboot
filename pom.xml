@@ -23,7 +23,7 @@
 
         <swagger.version>2.8.0</swagger.version>
         <swagger-codegen-maven-plugin.version>2.3.1</swagger-codegen-maven-plugin.version>
-        <hutool.version>4.0.8</hutool.version>
+        <hutool.version>4.0.9</hutool.version>
         <hibernate.validator.version>6.0.7.Final</hibernate.validator.version>
         <mapstruct.version>1.2.0.Final</mapstruct.version>
         <jjwt.version>0.9.0</jjwt.version>
@@ -156,6 +156,16 @@
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-core</artifactId>
+            <version>${hutool.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-crypto</artifactId>
+            <version>${hutool.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-http</artifactId>
             <version>${hutool.version}</version>
         </dependency>
         <!-- fastjson -->

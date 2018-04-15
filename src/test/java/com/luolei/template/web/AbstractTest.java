@@ -1,5 +1,6 @@
 package com.luolei.template.web;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Sets;
 import com.luolei.template.domain.Authority;
 import com.luolei.template.domain.Role;
@@ -8,15 +9,35 @@ import com.luolei.template.domain.support.AuthorityType;
 import com.luolei.template.repository.AuthorityRepository;
 import com.luolei.template.repository.RoleRepository;
 import com.luolei.template.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.After;
+import org.junit.Before;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.context.WebApplicationContext;
 
 /**
  * @author luolei
- * @createTime 2018-04-08 23:08
+ * @createTime 2018-04-15 18:55
  */
-public interface DataInit {
+@Slf4j
+public class AbstractTest {
 
-    default void init(AuthorityRepository authorityRepository, RoleRepository roleRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Autowired
+    private AuthorityRepository authorityRepository;
+    @Autowired
+    private RoleRepository roleRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    public void before() throws Exception {}
+
+    public void initUser(AuthorityRepository authorityRepository, RoleRepository roleRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
         Authority p1 = new Authority();
         p1.setType(AuthorityType.SERVICE);
         p1.setAuthority("p1");
@@ -85,4 +106,20 @@ public interface DataInit {
         admin.setRoles(Sets.newHashSet(adminRole));
         admin = userRepository.save(admin);
     }
+
+    @Before
+    public void setUp() throws Exception {
+        initUser(authorityRepository, roleRepository, userRepository, passwordEncoder);
+        before();
+        log.info("========== 开始测试 ==========");
+    }
+
+    public void after() throws Exception {}
+
+    @After
+    public void clear() throws Exception {
+        after();
+        log.info("========== 结束测试 ==========");
+    }
+
 }

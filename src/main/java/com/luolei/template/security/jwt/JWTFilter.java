@@ -1,6 +1,7 @@
 package com.luolei.template.security.jwt;
 
 import com.alibaba.fastjson.JSON;
+import com.luolei.template.error.BaseException;
 import com.luolei.template.support.R;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

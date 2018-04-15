@@ -1,11 +1,12 @@
 package com.luolei.template.support;
 
+import cn.hutool.core.util.StrUtil;
+import com.luolei.template.error.BaseException;
 import org.springframework.boot.autoconfigure.web.ErrorProperties;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.autoconfigure.web.servlet.error.AbstractErrorController;
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorViewResolver;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
@@ -13,13 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author 罗雷
@@ -31,30 +30,27 @@ import java.util.Map;
 public class GlobalErrorController extends AbstractErrorController{
 
     private final ErrorProperties errorProperties;
-
+    private final ErrorAttributes errorAttributes;
     public GlobalErrorController(ErrorAttributes errorAttributes,
                            ServerProperties serverProperties, List<ErrorViewResolver> errorViewResolvers) {
         super(errorAttributes, errorViewResolvers);
         Assert.notNull(serverProperties.getError(), "ErrorProperties must not be null");
         this.errorProperties = serverProperties.getError();
+        this.errorAttributes = errorAttributes;
     }
 
-    @RequestMapping(produces = "text/html")
-    public ModelAndView errorHtml(HttpServletRequest request,
-                                  HttpServletResponse response) {
-        HttpStatus status = getStatus(request);
-        Map<String, Object> model = Collections.unmodifiableMap(getErrorAttributes(
-                request, isIncludeStackTrace(request, MediaType.TEXT_HTML)));
-        response.setStatus(status.value());
-        ModelAndView modelAndView = resolveErrorView(request, response, status, model);
-        return (modelAndView == null ? new ModelAndView("error", model) : modelAndView);
-    }
-
-    @RequestMapping(produces = "application/json")
+    @RequestMapping
     @ResponseBody
     public R error(HttpServletRequest request) {
-        Map<String, Object> body = getErrorAttributes(request,
-                isIncludeStackTrace(request, MediaType.ALL));
+        WebRequest webRequest = new ServletWebRequest(request);
+        Throwable throwable = this.errorAttributes.getError(webRequest);
+        Map<String, Object> body = getErrorAttributes(request, isIncludeStackTrace(request, MediaType.ALL));
+        if (Objects.nonNull(throwable) && Objects.equals(throwable.getClass(), BaseException.class)) {
+            BaseException baseException = (BaseException) throwable;
+            if (StrUtil.isNotBlank(baseException.getCode())) {
+                return R.error(baseException.getCode()).data(body);
+            }
+        }
         return R.fail().data(body);
     }
 

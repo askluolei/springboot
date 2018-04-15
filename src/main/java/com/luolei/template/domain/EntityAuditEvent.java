@@ -1,6 +1,5 @@
 package com.luolei.template.domain;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,7 +18,7 @@ import java.time.Instant;
 @Getter
 @Setter
 @Entity
-@Table(name = "jhi_entity_audit_event")
+@Table(name = "t_entity_audit_event")
 public class EntityAuditEvent implements Serializable {
 
     @Id

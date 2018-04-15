@@ -45,18 +45,8 @@ spring:
         # slf4j 日志打印，修改默认配置，直接打印可执行的sql语句，很长的字段值不会直接打印出来的
         # 具体配置在 com.alibaba.druid.filter.logging.LogFilter 里面
         slf4j:
-          enabled: true
-          statement-create-after-log-enabled: false
-          statement-prepare-after-log-enabled: false
-          statement-prepare-call-after-log-enabled: false
-          statement-execute-after-log-enabled: false
-          statement-execute-query-after-log-enabled: false
-          statement-execute-update-after-log-enabled: false
-          statement-execute-batch-after-log-enabled: false
+          enabled: false
           statement-executable-sql-log-enable: true
-          statement-close-after-log-enabled: false
-          statement-parameter-clear-log-enable: false
-          statement-parameter-set-log-enabled: false
         # sql 防火墙 ,详细配置参考 https://github.com/alibaba/druid/wiki/%E9%85%8D%E7%BD%AE-wallfilter
         wall:
           # 开发阶段关掉，因为是内存数据库，启动应用的时候删表，建表，通不过防火墙默认配置
