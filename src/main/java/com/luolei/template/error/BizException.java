@@ -6,7 +6,7 @@ package com.luolei.template.error;
  * @author luolei
  * @createTime 2018-03-24 12:13
  */
-public class BaseException extends RuntimeException {
+public class BizException extends RuntimeException {
 
     /**
      * 错误码
@@ -15,23 +15,23 @@ public class BaseException extends RuntimeException {
      */
     private String code;
 
-    public BaseException() {
+    public BizException() {
         super();
     }
 
-    public BaseException(String message) {
+    public BizException(String message) {
         super(message);
     }
 
-    public BaseException(String message, Throwable cause) {
+    public BizException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public BaseException(Throwable cause) {
+    public BizException(Throwable cause) {
         super(cause);
     }
 
-    public BaseException withCode(String code) {
+    public BizException withCode(String code) {
         this.code = code;
         return this;
     }

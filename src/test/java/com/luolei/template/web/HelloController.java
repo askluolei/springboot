@@ -1,6 +1,6 @@
 package com.luolei.template.web;
 
-import com.luolei.template.error.BaseException;
+import com.luolei.template.error.BizException;
 import com.luolei.template.support.R;
 import io.micrometer.core.annotation.Timed;
 import org.springframework.http.MediaType;
@@ -93,7 +93,7 @@ public class HelloController {
      */
     @GetMapping("/base-exception")
     public R baseException() {
-        throw new BaseException("业务基础异常测试");
+        throw new BizException("业务基础异常测试");
     }
 
     /**

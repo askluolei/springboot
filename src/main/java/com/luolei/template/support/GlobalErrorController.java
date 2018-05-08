@@ -1,7 +1,7 @@
 package com.luolei.template.support;
 
 import cn.hutool.core.util.StrUtil;
-import com.luolei.template.error.BaseException;
+import com.luolei.template.error.BizException;
 import org.springframework.boot.autoconfigure.web.ErrorProperties;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.autoconfigure.web.servlet.error.AbstractErrorController;
@@ -45,10 +45,10 @@ public class GlobalErrorController extends AbstractErrorController{
         WebRequest webRequest = new ServletWebRequest(request);
         Throwable throwable = this.errorAttributes.getError(webRequest);
         Map<String, Object> body = getErrorAttributes(request, isIncludeStackTrace(request, MediaType.ALL));
-        if (Objects.nonNull(throwable) && Objects.equals(throwable.getClass(), BaseException.class)) {
-            BaseException baseException = (BaseException) throwable;
-            if (StrUtil.isNotBlank(baseException.getCode())) {
-                return R.error(baseException.getCode()).data(body);
+        if (Objects.nonNull(throwable) && Objects.equals(throwable.getClass(), BizException.class)) {
+            BizException bizException = (BizException) throwable;
+            if (StrUtil.isNotBlank(bizException.getCode())) {
+                return R.error(bizException.getCode()).data(body);
             }
         }
         return R.fail().data(body);

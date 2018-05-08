@@ -2,7 +2,7 @@ package com.luolei.template.web.controller;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.IoUtil;
-import com.luolei.template.error.BaseException;
+import com.luolei.template.error.BizException;
 import com.luolei.template.service.FileService;
 import com.luolei.template.support.R;
 import com.luolei.template.support.annotation.RequestURI;
@@ -63,7 +63,7 @@ public class FileController {
         if (Objects.nonNull(file)) {
             return outputStream -> IoUtil.copy(FileUtil.getInputStream(file), outputStream);
         } else {
-            throw new BaseException("待下载的文件不存在:" + requestURI);
+            throw new BizException("待下载的文件不存在:" + requestURI);
         }
     }
 }

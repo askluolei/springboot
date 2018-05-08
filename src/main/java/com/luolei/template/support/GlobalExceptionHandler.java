@@ -1,7 +1,7 @@
 package com.luolei.template.support;
 
 import cn.hutool.core.util.StrUtil;
-import com.luolei.template.error.BaseException;
+import com.luolei.template.error.BizException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
@@ -34,9 +34,9 @@ public class GlobalExceptionHandler {
      * @param request
      * @return
      */
-    @ExceptionHandler(BaseException.class)
+    @ExceptionHandler(BizException.class)
     @ResponseBody
-    public R handleEBException(BaseException e, WebRequest request) {
+    public R handleEBException(BizException e, WebRequest request) {
         log.error("系统内部异常", e);
         String code = e.getCode();
         if (isDebug(request)) {

@@ -88,7 +88,7 @@ public class R {
     static Class<?>[] basicTypes = {
             byte.class, char.class, short.class, int.class, float.class, double.class, long.class,
             Byte.class, Character.class, Short.class, Integer.class, Float.class, Double.class, Long.class,
-            byte[].class, char[].class, short[].class, int[].class, float[].class, double[].class, long[].class,
+//            byte[].class, char[].class, short[].class, int[].class, float[].class, double[].class, long[].class,
             String.class, Date.class, LocalDate.class, LocalTime.class, LocalDateTime.class, Instant.class,
             BigDecimal.class
     };

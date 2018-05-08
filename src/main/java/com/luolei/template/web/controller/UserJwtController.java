@@ -3,7 +3,7 @@ package com.luolei.template.web.controller;
 import cn.hutool.core.util.StrUtil;
 import com.google.common.base.Preconditions;
 import com.luolei.template.domain.support.RequestPlatform;
-import com.luolei.template.error.BaseException;
+import com.luolei.template.error.BizException;
 import com.luolei.template.security.SecurityUtils;
 import com.luolei.template.service.JwtService;
 import com.luolei.template.support.R;
@@ -68,7 +68,7 @@ public class UserJwtController {
     @PutMapping("/authenticate")
     public R authorize(@RequestBody TokenDto tokenDto) {
         Preconditions.checkArgument(StrUtil.isNotBlank(tokenDto.getOfflineToken()), "踢人凭证不能为空");
-        String accessToken = SecurityUtils.getCurrentUserJWT().orElseThrow(() -> new BaseException("获取凭证失败"));
+        String accessToken = SecurityUtils.getCurrentUserJWT().orElseThrow(() -> new BizException("获取凭证失败"));
         Preconditions.checkState(StrUtil.isNotBlank(accessToken), "请求凭证不存在");
         return R.ok(jwtService.offline(accessToken, tokenDto.getOfflineToken()));
     }

@@ -1,6 +1,6 @@
 package com.luolei.template.aop;
 
-import com.luolei.template.error.BaseException;
+import com.luolei.template.error.BizException;
 import com.luolei.template.security.SecurityUtils;
 import com.luolei.template.security.support.HasPermission;
 import com.luolei.template.security.support.HasRole;
@@ -96,7 +96,7 @@ public class AuthorityAspect implements AspectPointcuts {
 
     private void prePermissionCheckCommon(HasPermission permission) {
         if (Objects.isNull(permission)) {
-            throw new BaseException("应用 权限 AOP 实现异常");
+            throw new BizException("应用 权限 AOP 实现异常");
         }
         String[] value = permission.value();
         JoinType joinType = permission.joinType();
@@ -110,12 +110,12 @@ public class AuthorityAspect implements AspectPointcuts {
                     return;
                 }
             }
-            throw new BaseException("权限不足, 需要权限之一:" + Arrays.toString(value)).withCode(R.AUTHORIZATION_ERROR);
+            throw new BizException("权限不足, 需要权限之一:" + Arrays.toString(value)).withCode(R.AUTHORIZATION_ERROR);
         } else {
             for (String permissionValue : value) {
                 boolean hasPermission = SecurityUtils.isCurrentUserInAuthority(permissionValue);
                 if (!hasPermission) {
-                    throw new BaseException("权限不足, 需要权限:" + Arrays.toString(value)).withCode(R.AUTHORIZATION_ERROR);
+                    throw new BizException("权限不足, 需要权限:" + Arrays.toString(value)).withCode(R.AUTHORIZATION_ERROR);
                 }
             }
         }
@@ -123,7 +123,7 @@ public class AuthorityAspect implements AspectPointcuts {
 
     private void preRoleCheckCommon(HasRole role) {
         if (Objects.isNull(role)) {
-            throw new BaseException("应用 角色 AOP 实现异常");
+            throw new BizException("应用 角色 AOP 实现异常");
         }
         String[] value = role.value();
         if (Objects.isNull(value) || value.length == 0) {
@@ -140,12 +140,12 @@ public class AuthorityAspect implements AspectPointcuts {
                     return;
                 }
             }
-            throw new BaseException("权限不足, 需要角色之一:" + Arrays.toString(value)).withCode(R.AUTHORIZATION_ERROR);
+            throw new BizException("权限不足, 需要角色之一:" + Arrays.toString(value)).withCode(R.AUTHORIZATION_ERROR);
         } else {
             for (String roleValue : value) {
                 boolean hasRole = SecurityUtils.isCurrentUserInAuthority(Constants.ROLE_PREFIX + roleValue);
                 if (!hasRole) {
-                    throw new BaseException("权限不足, 需要角色:" + Arrays.toString(value)).withCode(R.AUTHORIZATION_ERROR);
+                    throw new BizException("权限不足, 需要角色:" + Arrays.toString(value)).withCode(R.AUTHORIZATION_ERROR);
                 }
             }
         }

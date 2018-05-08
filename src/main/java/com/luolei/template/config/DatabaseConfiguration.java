@@ -1,8 +1,5 @@
 package com.luolei.template.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.luolei.template.config.audit.AsyncEntityAuditEventWriter;
-import com.luolei.template.repository.EntityAuditEventRepository;
 import com.luolei.template.support.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -23,7 +20,7 @@ import java.sql.SQLException;
  */
 @Slf4j
 @Configuration
-@EnableJpaRepositories("com.luolei.template.repository")
+@EnableJpaRepositories({"com.luolei.template.repository", "com.luolei.template.module.dynamic.repository"})
 @EnableJpaAuditing
 @EnableTransactionManagement
 public class DatabaseConfiguration {
